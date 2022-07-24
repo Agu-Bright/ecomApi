@@ -2,16 +2,15 @@ require("dotenv").config();
 const cors = require("cors");
 const express = require("express");
 const db = require("./db/connect");
+const productsRoute = require("./routes/product");
 const app = express();
 const PORT = process.env.PORT;
-const productRoute = require("./routes/product");
-
 //middleWares
 app.use(cors());
 app.use(express.json());
 
 //routes
-app.use("api/v1/", productRoute);
+app.use("/api/v1", productsRoute);
 
 const start = async () => {
   try {
