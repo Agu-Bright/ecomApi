@@ -35,19 +35,35 @@ const getProduct = async (req, res, next) => {
   res.status(200).json({ success: true, product });
 };
 
-//update product => /api/v1/product/:id
+//update product => /api/v1/admin/product/:id
 const updateProduct = async (req, res) => {
   const { id } = req.params;
-  const { body } = req.body;
-  console.log(body);
   if (!mongoose.Types.ObjectId.isValid(id))
     return res.status(404).send("There is no post with that Id found");
-  const product = await PRODUCT.findByIdAndUpdate(id, body, {
+  const product = await PRODUCT.findByIdAndUpdate(id, req.body, {
     new: true,
-    useValidators: true,
+    runValidator: true,
     useFindAndModify: true,
   });
   res.status(200).json({ success: true, product });
 };
 
-module.exports = { newProduct, getAllProducts, getProduct, updateProduct };
+//deleteProduct
+const deleteProduct = async (req, res) => {
+  const { id } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(id))
+    return res.status(404).send("There is no post with that Id found");
+
+  const product = await PRODUCT.findByIdAndRemove(id);
+
+  res.status(200).json({ success: true });
+};
+
+module.exports = {
+  newProduct,
+  getAllProducts,
+  getProduct,
+  updateProduct,
+  deleteProduct,
+};
