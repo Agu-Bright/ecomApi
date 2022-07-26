@@ -7,6 +7,13 @@ const app = express();
 const PORT = process.env.PORT;
 const errorMiddleware = require("./middlewares/errors");
 
+//Handle Uncaught exceptions
+process.on("uncaughtException", (err) => {
+  console.log(`Error: ${err.stack}`);
+  console.log("Shutting down due to Uncaught Exceptions");
+  process.exit(1);
+});
+
 //middleWares
 app.use(cors());
 app.use(express.json());
@@ -23,7 +30,9 @@ const start = async () => {
       console.log(`Server Listening on port:${PORT}`);
     });
   } catch (error) {
-    console.log(error);
+    console.log(error.message);
+    console.log("Shutting down the server due to unhandled promise rejection");
+    process.exit(1);
   }
 };
 start();
