@@ -3,6 +3,7 @@ const cors = require("cors");
 const express = require("express");
 const db = require("./db/connect");
 const productsRoute = require("./routes/product");
+const authenticationRoute = require("./routes/user");
 const app = express();
 const PORT = process.env.PORT;
 const errorMiddleware = require("./middlewares/errors");
@@ -20,6 +21,7 @@ app.use(express.json());
 
 //routes
 app.use("/api/v1", productsRoute);
+app.use("/api/v1", authenticationRoute);
 //errorMiddleware
 app.use(errorMiddleware);
 

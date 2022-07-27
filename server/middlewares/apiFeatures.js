@@ -20,7 +20,7 @@ class ApiFeatures {
 
   filter = () => {
     const queryCopy = { ...this.queryStr };
-    console.log(queryCopy);
+
     //removing fields from the query
     const removeFields = ["keyword", "limit", "page"];
     removeFields.forEach((field) => delete queryCopy[field]);
