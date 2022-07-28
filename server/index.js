@@ -7,6 +7,8 @@ const authenticationRoute = require("./routes/user");
 const app = express();
 const PORT = process.env.PORT;
 const errorMiddleware = require("./middlewares/errors");
+const cookieParser = require("cookie-parser");
+const Limiter = require("express-rate-limit");
 
 //Handle Uncaught exceptions
 process.on("uncaughtException", (err) => {
@@ -15,15 +17,21 @@ process.on("uncaughtException", (err) => {
   process.exit(1);
 });
 
+//Defining the rate limit for the authentication route
+const rateLimiter = Limiter({
+  windowMs: 5 * 60 * 1000,
+  max: 2,
+});
+
 //middleWares
 app.use(cors());
 app.use(express.json());
-
+app.use(cookieParser());
+app.use(errorMiddleware);
 //routes
 app.use("/api/v1", productsRoute);
-app.use("/api/v1", authenticationRoute);
+app.use("/api/v1", rateLimiter, authenticationRoute);
 //errorMiddleware
-app.use(errorMiddleware);
 
 const start = async () => {
   try {

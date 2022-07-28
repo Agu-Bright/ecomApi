@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const ErrorHandler = require("../utils/errorHandler");
 const catchAsyncErrors = require("../middlewares/catchAsyncErrors");
+const sendToken = require("../utils/jwtToken");
 
 //Register a user => /api/v1/register
 const registerUser = catchAsyncErrors(async (req, res, next) => {
@@ -17,12 +18,8 @@ const registerUser = catchAsyncErrors(async (req, res, next) => {
     },
   });
 
-  //Genetate the json web token
-  const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRES_TIME,
-  });
-
-  res.status(201).json({ success: true, token });
+  //set Token to the cookie header
+  sendToken(user, 200, res);
 });
 
 //Login User => /api/v1/login
@@ -47,12 +44,24 @@ const loginUser = catchAsyncErrors(async (req, res, next) => {
     return next(new ErrorHandler("Invalid Email or Password", 401));
   }
 
-  //generate jwt token
-  const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRES_TIME,
-  });
-
-  res.status(200).json({ success: true, token });
+  //set token to the cookie header
+  sendToken(user, 200, res);
 });
 
-module.exports = { registerUser, loginUser };
+//LOGOUT USER => /api/v1/logout
+const logoutUser = catchAsyncErrors(async (req, res, next) => {
+  res.cookies =
+    ("token",
+    null,
+    {
+      expires: new Date(Date.now()),
+      httpOnly: true,
+    });
+
+  res.status(200).json({
+    success: true,
+    message: "Logged Out",
+  });
+});
+
+module.exports = { registerUser, loginUser, logoutUser };
