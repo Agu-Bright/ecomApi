@@ -18,10 +18,10 @@ process.on("uncaughtException", (err) => {
 });
 
 //Defining the rate limit for the authentication route
-const rateLimiter = Limiter({
-  windowMs: 5 * 60 * 1000,
-  max: 2,
-});
+// const rateLimiter = Limiter({
+//   windowMs: 5 * 60 * 1000,
+//   max: 2,
+// });
 
 //middleWares
 app.use(cors());
@@ -30,7 +30,7 @@ app.use(cookieParser());
 app.use(errorMiddleware);
 //routes
 app.use("/api/v1", productsRoute);
-app.use("/api/v1", rateLimiter, authenticationRoute);
+app.use("/api/v1", authenticationRoute);
 //errorMiddleware
 
 const start = async () => {
