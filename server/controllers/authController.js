@@ -4,6 +4,8 @@ const ErrorHandler = require("../utils/errorHandler");
 const catchAsyncErrors = require("../middlewares/catchAsyncErrors");
 const sendToken = require("../utils/jwtToken");
 const sendEmail = require("../utils/sendEmail");
+const crypto = require("crypto");
+
 //Register a user => /api/v1/register
 const registerUser = catchAsyncErrors(async (req, res, next) => {
   const { name, email, password } = req.body;
@@ -48,7 +50,6 @@ const loginUser = catchAsyncErrors(async (req, res, next) => {
 });
 
 //FORGOT_PASSWORD => /api/v1/password/forgot
-
 const forgotPassword = catchAsyncErrors(async (req, res, next) => {
   const user = await USER.findOne({ email: req.body.email });
   if (!user) {
@@ -117,21 +118,64 @@ const resetPassword = catchAsyncErrors(async (req, res, next) => {
   user.resetPasswordToken = undefined;
   user.resetPasswordExpire = undefined;
 
-  await user.save();
+  await user.save({ validateBeforeSave: false });
 
   //set token to the cookie header
   sendToken(user, 200, res);
 });
 
+// GET_LOGGEDIN_USER_PROFILE => api/v1/user/me
+const getUserDetails = catchAsyncErrors(async (req, res, next) => {
+  const user = await USER.findById(req.user.id);
+  if (!user) {
+    return next(new ErrorHandler("no user found", 404));
+  }
+  res.status(200).json({
+    success: true,
+    user,
+  });
+});
+
+//UPDATE_USER_PASSWORD
+const updatePassword = catchAsyncErrors(async (req, res, next) => {
+  const { oldPassword, newPassword } = req.body;
+  //get the user
+  const user = await USER.findById(req.user.id).select("+password");
+  //campare password
+  const doesPassswordMatch = await bcrypt.compare(oldPassword, user.password);
+  if (!doesPassswordMatch) {
+    return next(new ErrorHandler("Old password is incorrect", 400));
+  }
+  user.password = newPassword;
+  await user.save({ validateBeforeSave: false });
+  sendToken(user, 200, res);
+});
+
+//UPDATE_USER_DETAILS
+const updateUserDetails = catchAsyncErrors(async (req, res, next) => {
+  const update = {
+    name: req.body.name,
+    email: req.body.email,
+    //update avata: TODO
+  };
+
+  const user = await USER.findByIdAndUpdate(req.user.id, update, {
+    new: true,
+    runValidator: true,
+    useFindAndModify: false,
+  });
+
+  res.status(200).json({
+    success: true,
+  });
+});
+
 //LOGOUT USER => /api/v1/logout
 const logoutUser = catchAsyncErrors(async (req, res, next) => {
-  res.cookie =
-    ("token",
-    null,
-    {
-      expires: new Date(Date.now()),
-      httpOnly: true,
-    });
+  res.cookie("token", null, {
+    expires: new Date(Date.now()),
+    httpOnly: true,
+  });
 
   res.status(200).json({
     success: true,
@@ -145,4 +189,7 @@ module.exports = {
   logoutUser,
   forgotPassword,
   resetPassword,
+  getUserDetails,
+  updatePassword,
+  updateUserDetails,
 };
