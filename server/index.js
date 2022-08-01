@@ -4,6 +4,7 @@ const express = require("express");
 const db = require("./db/connect");
 const productsRoute = require("./routes/product");
 const authenticationRoute = require("./routes/user");
+const orderRoute = require("./routes/order");
 const app = express();
 const PORT = process.env.PORT;
 const errorMiddleware = require("./middlewares/errors");
@@ -31,6 +32,7 @@ app.use(errorMiddleware);
 //routes
 app.use("/api/v1", productsRoute);
 app.use("/api/v1", authenticationRoute);
+app.use("/api/v1", orderRoute);
 //errorMiddleware
 
 const start = async () => {

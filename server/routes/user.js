@@ -30,7 +30,7 @@ router.put("/password/update", authMiddleWare, updatePassword);
 router.put("/me/update", authMiddleWare, updatePassword);
 
 //admin routes
-router.get("/admin/user", authMiddleWare, authorizeRoles("admin"), getUsers);
+router.get("/admin/users", authMiddleWare, authorizeRoles("admin"), getUsers);
 router.get(
   "/admin/user/:id",
   authMiddleWare,
