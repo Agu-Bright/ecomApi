@@ -183,6 +183,65 @@ const logoutUser = catchAsyncErrors(async (req, res, next) => {
   });
 });
 
+//ADMIN_ROUTES
+
+//get all users => api/v1/admin
+
+const getUsers = catchAsyncErrors(async (req, res, next) => {
+  const users = await USER.find();
+
+  res.status(200).json({
+    success: true,
+    users,
+  });
+});
+
+//get user detail => api/v1/admin/user/:id
+const adminGetUserDetail = catchAsyncErrors(async (req, res, next) => {
+  const user = await USER.findById(req.params.id);
+  if (!user) {
+    return next(new ErrorHandler(`No User Found with the id ${req.params.id}`));
+  }
+  res.status(200).json({
+    success: true,
+    user,
+  });
+});
+
+//UPDATE_USER_DETAILS => api/v1/admin/user/:id
+const adminUpdateUserDetails = catchAsyncErrors(async (req, res, next) => {
+  const update = {
+    name: req.body.name,
+    email: req.body.email,
+    role: req.body.role,
+  };
+
+  const user = await USER.findByIdAndUpdate(req.params.id, update, {
+    new: true,
+    runValidator: true,
+    useFindAndModify: false,
+  });
+
+  res.status(200).json({
+    success: true,
+  });
+});
+
+//DELETE USER => /api/v1/admin/user/:id
+const deleteUser = catchAsyncErrors(async (req, res, next) => {
+  const user = await USER.findById(req.params.id);
+  if (!user) {
+    return next(new ErrorHandler(`No user with the id:${req.params.id} found`));
+  }
+
+  //Remove avater from cloudinary- TODO
+
+  await user.remove();
+  res.status(200).json({
+    success: true,
+  });
+});
+
 module.exports = {
   registerUser,
   loginUser,
@@ -192,4 +251,8 @@ module.exports = {
   getUserDetails,
   updatePassword,
   updateUserDetails,
+  getUsers,
+  adminGetUserDetail,
+  adminUpdateUserDetails,
+  deleteUser,
 };
