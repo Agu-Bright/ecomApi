@@ -7,6 +7,9 @@ const {
   getProduct,
   updateProduct,
   deleteProduct,
+  createProductReview,
+  getProductReviews,
+  deletereview,
 } = require("../controllers/products");
 const {
   authMiddleWare,
@@ -34,5 +37,8 @@ router.delete(
 
 router.get("/products", getAllProducts);
 router.get("/product/:id", getProduct);
+router.put("/review", authMiddleWare, createProductReview);
+router.get("/reviews", authMiddleWare, getProductReviews);
+router.delete("/reviews", authMiddleWare, deletereview);
 
 module.exports = router;
