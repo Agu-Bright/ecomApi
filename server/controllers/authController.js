@@ -159,7 +159,7 @@ const updateUserDetails = catchAsyncErrors(async (req, res, next) => {
     //update avata: TODO
   };
 
-  const user = await USER.findByIdAndUpdate(req.user.id, update, {
+  await USER.findByIdAndUpdate(req.user.id, update, {
     new: true,
     runValidator: true,
     useFindAndModify: false,
