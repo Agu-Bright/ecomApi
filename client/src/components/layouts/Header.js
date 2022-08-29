@@ -3,7 +3,7 @@ import React from "react";
 const Header = () => {
   return (
     <>
-      <nav classNameName="navbar row">
+      <nav className="navbar row">
         <div className="col-12 col-md-3">
           <div className="navbar-brand">
             <img src="/images/logo.png" />

@@ -10,7 +10,7 @@ function App() {
         <Header />
         <div className="container container-fluid">
           <Routes>
-            <Route path="/en" element={<Home />} />
+            <Route path="/" element={<Home />} />
           </Routes>
         </div>
         <Footer />

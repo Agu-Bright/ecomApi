@@ -14,8 +14,8 @@ const newProduct = catchAsyncErrors(async (req, res, next) => {
 //get all products => /api/v1/products?keyword=apple
 const getAllProducts = catchAsyncErrors(async (req, res, next) => {
   //add the functionality of the **PAGINATION **SEARCH **FILTER
-  const resPerPage = 4;
-  const productCount = await PRODUCT.countDocuments();
+  const resPerPage = 8;
+  const productsCount = await PRODUCT.countDocuments();
   const apiFeatures = new ApiFeatures(PRODUCT.find(), req.query)
     .search()
     .filter()
@@ -25,8 +25,7 @@ const getAllProducts = catchAsyncErrors(async (req, res, next) => {
 
   res.status(200).json({
     success: true,
-    count: products.length,
-    productCount,
+    productsCount,
     products,
   });
 });
