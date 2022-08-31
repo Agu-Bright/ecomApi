@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+
 function Product({ product }) {
   return (
     <div className="col-sm-12 col-md-6 col-lg-3 my-3">
